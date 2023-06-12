@@ -1,9 +1,12 @@
+//importe le module de BDD
 const database = require("./database");
 
+//récupère la liste de films
 const getMovies = (req, res) => {
   const initialSql = "select * from movies";
   const where = [];
 
+  //vérifie que la requpete contient un filtre "color"
   if (req.query.color != null) {
     where.push({
       column: "color",
@@ -11,6 +14,7 @@ const getMovies = (req, res) => {
       operator: "=",
     });
   }
+  //vérifie que la requête contient un filtre "duration"
   if (req.query.max_duration != null) {
     where.push({
       column: "duration",
@@ -19,6 +23,7 @@ const getMovies = (req, res) => {
     });
   }
 
+  //je construis la requête SQL en utilisant les filtres
   database
     .query(
       where.reduce(
@@ -36,10 +41,10 @@ const getMovies = (req, res) => {
       res.status(500).send("Error retrieving data from database");
     });
 };
-
+// je récupère un film par son id
 const getMovieById = (req, res) => {
   const id = parseInt(req.params.id);
-
+  // requête SQL pour récupérer le film correspondant à un identifiant
   database
     .query("select * from movies where id = ?", [id])
     .then(([movies]) => {
@@ -54,10 +59,10 @@ const getMovieById = (req, res) => {
       res.status(500).send("Error retrieving data from database");
     });
 };
-
+// j'ajoute un nouveau film
 const postMovie = (req, res) => {
   const { title, director, year, color, duration } = req.body;
-
+// requête SQL pour insérer un nouveau film
   database
     .query(
       "INSERT INTO movies(title, director, year, color, duration) VALUES (?, ?, ?, ?, ?)",
@@ -71,11 +76,11 @@ const postMovie = (req, res) => {
       res.status(500).send("Error saving the movie");
     });
 };
-
+// met à jour un film
 const updateMovie = (req, res) => {
   const id = parseInt(req.params.id);
   const { title, director, year, color, duration } = req.body;
-
+// requête SQL pour mettre à jour un film selon son identifiant 
   database
     .query(
       "update movies set title = ?, director = ?, year = ?, color = ?, duration = ? where id = ?",
@@ -93,10 +98,10 @@ const updateMovie = (req, res) => {
       res.status(500).send("Error editing the movie");
     });
 };
-
+// supprimer un film
 const deleteMovie = (req, res) => {
   const id = parseInt(req.params.id);
-
+// requête SQL pour supprimer le film correspondant à un id
   database
     .query("delete from movies where id = ?", [id])
     .then(([result]) => {
@@ -111,7 +116,7 @@ const deleteMovie = (req, res) => {
       res.status(500).send("Error deleting the movie");
     });
 };
-
+// j'exporte mes fonctionnalités
 module.exports = {
   getMovies,
   getMovieById,

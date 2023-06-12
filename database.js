@@ -1,5 +1,6 @@
+// importe les variables d'environnements
 require("dotenv").config();
-
+// importe le module mysql pour communiquer avec la BDD
 const mysql = require("mysql2/promise");
 
 const database = mysql.createPool({
@@ -9,7 +10,7 @@ const database = mysql.createPool({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
 });
-
+// test la connexion à la BDD
 database
   .getConnection()
   .then(() => {
@@ -18,5 +19,5 @@ database
   .catch((err) => {
     console.error(err);
   });
-
+// exporte la connexion pool vers la BDD
 module.exports = database;
